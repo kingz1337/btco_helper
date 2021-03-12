@@ -5,6 +5,7 @@ import requests
 import wget
 import os
 import time
+from requests import ReadTimeout, ConnectTimeout, HTTPError, Timeout, ConnectionError
 
 def main():
 
@@ -39,8 +40,9 @@ def main():
         if not os.path.isfile(path_1):
             try:
                 wget.download("https://ipfs.io/ipfs/"+img, out=path_1)
-            except:
-                print("waiting 5 seconds\n")
+            except (ConnectTimeout, HTTPError, ReadTimeout, Timeout, ConnectionError) as e:                
+                print("Oops we hit an error - " + e + "\n")
+                print("Don't worry we're going to try again in 5 seconds\n")
                 time.sleep(5)
                 wget.download("https://ipfs.io/ipfs/"+img, out=path_1)
 
@@ -49,8 +51,9 @@ def main():
             if not os.path.isfile(path_2):
                 try:
                     wget.download("https://ipfs.io/ipfs/"+back_img, out=path_2)
-                except:
-                    print("waiting 5 seconds\n")
+                except (ConnectTimeout, HTTPError, ReadTimeout, Timeout, ConnectionError) as e:
+                    print("Oops we hit an error - " + e + "\n")
+                    print("Don't worry we're going to try again in 5 seconds =)")
                     time.sleep(5)
                     wget.download("https://ipfs.io/ipfs/"+back_img, out=path_2)
 
