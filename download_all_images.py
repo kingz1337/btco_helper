@@ -4,6 +4,7 @@
 import requests
 import wget
 import os
+import time
 
 def main():
 
@@ -29,18 +30,29 @@ def main():
         filename_2 = filename_1+'_'+'backimage' if back_img is not None else None
         filetype_1 = requests.head("https://ipfs.io/ipfs/"+img)
         filetype_1 = filetype_1.headers['Content-Type'].split('/')[-1]
-        
+
         if filename_2 is not None:
             filetype_2 = requests.head("https://ipfs.io/ipfs/"+back_img)
             filetype_2 = filetype_2.headers['Content-Type'].split('/')[-1]
 
         path_1 = folder+os.path.sep+filename_1+'.'+filetype_1
         if not os.path.isfile(path_1):
-            wget.download("https://ipfs.io/ipfs/"+img, out=path_1)
+            try:
+                wget.download("https://ipfs.io/ipfs/"+img, out=path_1)
+            except:
+                print("waiting 5 seconds\n")
+                time.sleep(5)
+                wget.download("https://ipfs.io/ipfs/"+img, out=path_1)
+
         if back_img is not None:
             path_2 = folder+os.path.sep+filename_2+'.'+filetype_2
             if not os.path.isfile(path_2):
-                wget.download("https://ipfs.io/ipfs/"+back_img, out=path_2)
+                try:
+                    wget.download("https://ipfs.io/ipfs/"+back_img, out=path_2)
+                except:
+                    print("waiting 5 seconds\n")
+                    time.sleep(5)
+                    wget.download("https://ipfs.io/ipfs/"+back_img, out=path_2)
 
     print("\nFinished")
 
