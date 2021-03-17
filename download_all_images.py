@@ -40,10 +40,15 @@ def main():
         if not os.path.isfile(path_1):
             try:
                 wget.download("https://ipfs.io/ipfs/"+img, out=path_1)
-            except (ConnectTimeout, HTTPError, ReadTimeout, Timeout, ConnectionError) as e:                
+            except (ConnectTimeout, HTTPError, ReadTimeout, Timeout, ConnectionError) as e:
                 print("Oops we hit an error - " + e + "\n")
                 print("Don't worry we're going to try again in 5 seconds\n")
                 time.sleep(5)
+                wget.download("https://ipfs.io/ipfs/"+img, out=path_1)
+            except Exception as e:
+                print("Oops we really hit an error - " + e + "\n")
+                print("Don't worry we're going to try again in 10 seconds\n")
+                time.sleep(10)
                 wget.download("https://ipfs.io/ipfs/"+img, out=path_1)
 
         if back_img is not None:
@@ -56,7 +61,12 @@ def main():
                     print("Don't worry we're going to try again in 5 seconds =)")
                     time.sleep(5)
                     wget.download("https://ipfs.io/ipfs/"+back_img, out=path_2)
-
+                except Exception as e:
+                    print("Oops we really hit an error - " + e + "\n")
+                    print("Don't worry we're going to try again in 10 seconds =)")
+                    time.sleep(10)
+                    wget.download("https://ipfs.io/ipfs/"+back_img, out=path_2)
+                    
     print("\nFinished")
 
 if __name__ == "__main__":
