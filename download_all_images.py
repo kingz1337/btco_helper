@@ -7,9 +7,37 @@ import os
 import time
 from requests import ReadTimeout, ConnectTimeout, HTTPError, Timeout, ConnectionError
 
+meme_images = ['https://images.dontbuymeme.com/collections/bitcoin-origins/mp4/wheel-of-fortune.mp4',
+               'https://images.dontbuymeme.com/collections/bitcoin-origins/static/inception.jpg',
+               'https://images.dontbuymeme.com/collections/bitcoin-origins/static/proliferation.jpg',
+               'https://images.dontbuymeme.com/collections/bitcoin-origins/static/propagation.jpg',
+               'https://images.dontbuymeme.com/collections/bitcoin-origins/static/the-affirmation-seed.jpg',
+               'https://images.dontbuymeme.com/collections/bitcoin-origins/static/pizza-day.jpg',
+               'https://images.dontbuymeme.com/collections/bitcoin-origins/static/pride-of-the-lotus.jpg',
+              ]
+
 def main():
 
-    # get the number of templates
+    # get all images from the meme pool
+    if not os.path.exists("meme_pool"):
+        os.makedirs("meme_pool")
+    for i in meme_images:
+        meme_path = "meme_pool"+os.path.sep+i.split('/')[-1]
+        if not os.path.isfile(meme_path):
+            try:
+                wget.download(i, out=meme_path)
+            except (ConnectTimeout, HTTPError, ReadTimeout, Timeout, ConnectionError) as e:
+                print("Oops we hit an error - " + e + "\n")
+                print("Don't worry we're going to try again in 5 seconds\n")
+                time.sleep(5)
+                wget.download(i, out=meme_path)
+            except Exception as e:
+                print("Oops we really hit an error - " + e + "\n")
+                print("Don't worry we're going to try again in 10 seconds\n")
+                time.sleep(10)
+                wget.download(i, out=meme_path)
+
+    # get the number of templates on atomichub
     r = requests.get('https://wax.api.atomicassets.io/atomicassets/v1/collections/bitcoinorign/stats')
     tmp = r.json()
     num_templates = int(tmp['data']['templates'])
@@ -66,7 +94,7 @@ def main():
                     print("Don't worry we're going to try again in 10 seconds =)")
                     time.sleep(10)
                     wget.download("https://ipfs.io/ipfs/"+back_img, out=path_2)
-                    
+
     print("\nFinished")
 
 if __name__ == "__main__":
